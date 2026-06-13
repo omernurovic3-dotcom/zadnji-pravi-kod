@@ -1,4 +1,4 @@
-DOCTYPE html>
+!DOCTYPE html>
 <html lang="sr">
 <head>
 <meta charset="UTF-8">
@@ -331,40 +331,61 @@ sum+=cena;
 uk.innerText=sum.toFixed(2)+" €";
 }
 
-// PDF FAKTURA
+
+
+
+function // PDF FAKTURA
 function pdf(){
 
 let { jsPDF } = window.jspdf;
-let d=new jsPDF();
+let d = new jsPDF();
 
 d.text("GAZIPLAST PONUDA / FAKTURA",10,10);
-d.text("Klijent: "+klijent.value,10,18);
+d.text("Klijent: " + klijent.value,10,18);
 
-let y=30;
+let y = 30;
 
 document.querySelectorAll("#t tr:not(:first-child)").forEach((r,i)=>{
 
-let tip=r.cells[0].innerText;
-let s=r.querySelector(".s").value;
-let v=r.querySelector(".v").value;
-let cena=r.querySelector(".cena").innerText;
+let tip = r.cells[0].innerText;
+let s = r.querySelector(".s").value;
+let v = r.querySelector(".v").value;
+let cena = r.querySelector(".cena").innerText;
 
 d.text(`${i+1}. ${tip} ${s}x${v}`,10,y);
-d.text(cena,100,y);
+d.text(cena,90,y);
 
-let img=r.querySelector("canvas").toDataURL("image/png");
-d.addImage(img,"PNG",130,y-5,30,20);
+let canvas = r.querySelector("canvas");
 
-y+=25;
+if(canvas){
+
+let img = canvas.toDataURL("image/png");
+
+// REALAN PRIKAZ kao u CRM
+let pdfW = 55;
+let pdfH = pdfW * (canvas.height / canvas.width);
+
+d.addImage(
+img,
+"PNG",
+140,
+y - 8,
+pdfW,
+pdfH
+);
+
+y += Math.max(pdfH + 8, 25);
+
+}else{
+y += 25;
+}
 
 });
 
-d.text("Ukupno: "+uk.innerText,10,y+10);
+d.text("Ukupno: " + uk.innerText,10,y+10);
 
 d.save("ponuda.pdf");
-}
-
-function nova(){
+} nova(){
 t.innerHTML=`<tr>
 <th>Tip</th><th>Š</th><th>V</th><th>Profil</th><th>Otv</th><th>Opcije</th><th>Boja</th><th>Cena</th><th>Prikaz</th><th>X</th>
 </tr>`;
